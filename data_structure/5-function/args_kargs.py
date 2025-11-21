@@ -5,13 +5,13 @@ banco("Bradesco", "Criado em 2021", "Criador: Vinicius", nome="Vinicius Faria", 
 
 # No "TODO", abaixo: Crie a função 'soma_tupla' para receber uma tupla de números inteiros como argumento:
 
-def todo(tupla):
+def soma_tupla(tupla):
     return sum(tupla)
 
 if __name__ == "__main__":
     entrada = input()
 # No "TODO", abaixo: Defina tupla para receber os números inteiros:
-    elementos = todo(map(int, entrada.split()))
+    elementos = tuple(map(int, entrada.split()))
     
-    resultado = todo(elementos)
+    resultado = soma_tupla(elementos)
     print(f"A soma dos elementos da tupla é: {resultado}")
