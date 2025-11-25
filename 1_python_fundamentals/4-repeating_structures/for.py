@@ -10,3 +10,8 @@ else:
 
 for numero in range(0, 51, 5):
     print(numero, end=" ")
+
+
+# for min in range(9, -1, -1):
+#     for seg in range(59, -1, -1):
+#         print(f"{min}:{seg}")
