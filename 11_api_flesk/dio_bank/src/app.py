@@ -1,50 +1,30 @@
-from flask import Flask, url_for, request
+import os
 
-app = Flask(__name__)
-
-
-# =========================
-# ROTA UTILIZANDO UM RETORNO HTML
-# =========================
-@app.route("/")
-def hello_world():
-    return "<p>Hello world</p>"
+from flask import Flask
 
 
-# =========================
-# ROTA UTILIZANDO UM RETORNO JSON
-# =========================
-@app.route("/ola/<user>/<idade>/<gosto>")
-def welcome(user, idade, gosto):
-    return {
-        'nome': user,
-        'idade': idade,
-        'gosto': gosto
-    }
+def create_app(test_config=None):
+    # create and configure the app
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        SECRET_KEY='dev',
+        DATABASE='diobank.sqlite',
+    )
 
-
-# =========================
-# ROTA UTILIZANDO CHAMADA DE 2 MÉTODOS
-# =========================
-@app.route("/user/<usuario>", methods=["POST", "GET"])
-def usuario_teste(usuario):
-    return f"<h1>Ola ${usuario}</h1>"
-
-# =========================
-# ROTA UTILIZANDO CHAMADA DE DOIS MÉTODOS E VALIDAÇÕES DOS MESMOS
-# =========================
-@app.route("/teste-method/<usuario>", methods=["POST", "GET"])
-def testeMethod(usuario):
-    if request.method == "GET":
-        return f"This is a method get {usuario}"
+    if test_config is None:
+        # load the instance config, if it exists, when not testing
+        app.config.from_pyfile('config.py', silent=True)
     else:
-        return f"This is a method post {usuario}"
+        # load the test config if passed in
+        app.config.from_mapping(test_config)
 
 
-# =========================
-# TESTES UTILIZANDO URL_FOR, UTILIZADO PARA VERIFICAR AS URLS
-# =========================
-with app.test_request_context():
-    print(url_for("welcome", user="Vinicius", idade=12, gosto="Academia"))
-    print(url_for("usuario_teste", usuario="Vinicius"))
-    print(url_for("hello_world"))
+    # a simple page that says hello
+    @app.route('/hello')
+    def hello():
+        return 'Hello, World!'
+    
+    from . import db
+    db.init_app(app)
+
+    return app
