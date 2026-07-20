@@ -2,7 +2,8 @@ from flask import Blueprint, request
 from src.app import db, User
 from http import HTTPStatus
 from sqlalchemy import inspect
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
+from src.utils import requires_role
 
 app = Blueprint("user", __name__, url_prefix="/users")
 
@@ -31,14 +32,8 @@ def _list_users():
 
 @app.route("/", methods=["GET", "POST"])
 @jwt_required()
+@requires_role("admin")
 def handle_user():
-
-    user_id = get_jwt_identity()
-    user = db.get_or_404(User, user_id)
-
-    if (user.role.name != "admin"):
-        return {"message": "Forbidden, you dont have acess."}, HTTPStatus.FORBIDDEN
-
     if request.method == "POST":
         _create_user()
         return {
